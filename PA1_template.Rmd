@@ -70,6 +70,10 @@ meltInt <- melt(activity,
 castInt <- dcast(meltInt, 
                         interval ~ variable, 
                         mean)
+
+plot( castInt$interval, castInt$steps, type="l", xlab="5-minute intervals",
+      ylab="Aveverage steps by interval - all days")
+
 ```
 
 
@@ -84,12 +88,9 @@ paste("Interval w/ maximum number of steps = ",maxSteps)
 maxIntv <- max(castInt$steps)
 paste("Maximum interval w/ mean number of steps = ", maxIntv)  
 
-plot( castInt$interval, castInt$steps, type="l", xlab="5-minute intervals",
-      ylab="Aveverage steps by interval - all days")
-
 ```
 
-### Imputing missing values
+### 4. Imputing missing values
 
 4.1 Calculate and report the total number of missing values in the dataset
 
@@ -99,7 +100,7 @@ sum(is.na(activity$steps))
 
 4.2 Devise a strategy for dealing with missing values
 
-There are 2304 missing/NA values in the original dataset.The strategy for replacing missing values is to use the mean of the 5-minute interval in which the value is missing. The result will be a new dataset of the same dimension as the original dataset in which the NA values have been replaced with the mean for the internal.
+There are 2304 missing/NA values in the original dataset.The strategy for replacing missing values is to use the mean of the 5-minute interval in which the value is missing. The result will be a new dataset of the same dimension as the original dataset in which the NA values have been replaced with the mean for the inteval.
 The new steps in the new dataset can then be calculated and compared to the original dataset. 
 
 4.3 create a new dataset that is equal to the original dataset but with missing values filled-in.
@@ -191,3 +192,4 @@ plot <- ggplot(pcast, aes(x=interval, y=steps)) +
 plot + facet_wrap(~ dayCat, ncol=1)
 ```
 
+Based on comparion of the two plots it appears that people become active ealier in the day on weekends.
