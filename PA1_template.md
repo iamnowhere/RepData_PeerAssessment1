@@ -231,4 +231,4 @@ plot + facet_wrap(~ dayCat, ncol=1)
 
 ![](./PA1_template_files/figure-html/unnamed-chunk-13-1.png) 
 
-Based on comparion of the two plots it appears that people become active ealier in the day on weekends.
+Based on comparion of the two plots it appears that more people become active ealier on weekdays.
