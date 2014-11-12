@@ -1,27 +1,25 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ### 1. Loading and preprocessing the data
 
-```{r}
+
+```r
 setwd("~/RepData_PA1_Draft")
 activity <- read.csv("activity.csv")
 ```
 
 
-```{r}
+
+```r
 library(reshape2)
 library(ggplot2)
 ```
 
 
 
-```{r}
+
+```r
 meltAct <- melt(activity, id=c("date"), na.rm=TRUE, measure.vars="steps")
 dcastActv <- dcast(meltAct, date ~ variable, sum)
 ```
@@ -29,13 +27,19 @@ dcastActv <- dcast(meltAct, date ~ variable, sum)
 
 ### 2. What is mean total number of steps taken per day?
 
-```{r}
+
+```r
 sum(dcastActv$steps, na.rm=TRUE)
+```
+
+```
+## [1] 570608
 ```
 
 2.1 Make a histogram of the total number of steps taken each day.
 
-```{r}
+
+```r
 hist(x=dcastActv$steps,
      col="wheat",
      breaks=20,
@@ -44,15 +48,27 @@ hist(x=dcastActv$steps,
      main="Histogram of steps per day")
 ```
 
+![](./PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+
 2.2 Calculate and report the mean and meadian total number of steps today.
 
 2.2a The mean total number of steps per day.
 
-```{r}
+
+```r
 mean(dcastActv$steps, na.rm=TRUE)
+```
 
+```
+## [1] 10766.19
+```
+
+```r
 median(dcastActv$steps, na.rm=TRUE)
+```
 
+```
+## [1] 10765
 ```
 
 
@@ -61,7 +77,8 @@ median(dcastActv$steps, na.rm=TRUE)
 3.1 Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number 
 of steps taken, averaged across all days (y-axis)
 
-```{r}
+
+```r
 meltInt <- melt(activity, 
                        id=c("interval"), 
                        na.rm=TRUE, 
@@ -76,25 +93,43 @@ castInt <- dcast(meltInt,
 3.2 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number 
 of steps?
 
-```{r}
 
+```r
 maxSteps <- castInt$interval[which(castInt$steps == max(castInt$steps))]
 paste("Interval w/ maximum number of steps = ",maxSteps)
-
-maxIntv <- max(castInt$steps)
-paste("Maximum interval w/ mean number of steps = ", maxIntv)  
-
-plot( castInt$interval, castInt$steps, type="l", xlab="5-minute intervals",
-      ylab="Aveverage steps by interval - all days")
+```
 
 ```
+## [1] "Interval w/ maximum number of steps =  835"
+```
+
+```r
+maxIntv <- max(castInt$steps)
+paste("Maximum interval w/ mean number of steps = ", maxIntv)  
+```
+
+```
+## [1] "Maximum interval w/ mean number of steps =  206.169811320755"
+```
+
+```r
+plot( castInt$interval, castInt$steps, type="l", xlab="5-minute intervals",
+      ylab="Aveverage steps by interval - all days")
+```
+
+![](./PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
 
 ### Imputing missing values
 
 4.1 Calculate and report the total number of missing values in the dataset
 
-```{r}
+
+```r
 sum(is.na(activity$steps))
+```
+
+```
+## [1] 2304
 ```
 
 4.2 Devise a strategy for dealing with missing values
@@ -104,7 +139,8 @@ The new steps in the new dataset can then be calculated and compared to the orig
 
 4.3 create a new dataset that is equal to the original dataset but with missing values filled-in.
 
-```{r}
+
+```r
 activNa <- is.na(activity$steps)
 
 castIntb <- cbind(castInt, as.integer(round(castInt$steps)))
@@ -131,19 +167,22 @@ dcastImpAct <- dcast(meltImpAct, date ~ variable, sum)
 
 4.4 Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. 
 
-```{r}
 
+```r
 hist(dcastImpAct$steps,
      col="lightblue",
      breaks=20,
      xlab="daily steps",
      ylab="frequency",
      main="Histogram of total steps per day - Imputed values")
+```
 
+![](./PA1_template_files/figure-html/unnamed-chunk-11-1.png) 
+
+```r
 impMean <- format(round(mean(dcastImpAct$steps), 2), nsmall = 2)
 
 impMedian <- median(dcastImpAct$steps)
-
 ```
 
 
@@ -163,8 +202,8 @@ steps per day are now closer which indicates less variation in the numer of step
 5.1 Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating 
 whether a given date is a weekday or weekend day.
 
-```{r}
 
+```r
 wkday <- !(weekdays(as.Date(activImpAct$date)) %in% c('Saturday','Sunday'))
 
 dayweek <- c("", "")
@@ -181,7 +220,8 @@ activImpAct[, "dayCat"] <- factor(dayweek)
 and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
 
 
-```{r}
+
+```r
 plot <- ggplot(activImpAct, aes(x=interval, y=steps)) + geom_line()
 pmelt <- melt(activImpAct, id=c("interval", "dayCat"), na.rm=TRUE, measure.vars="steps")
 pcast <- dcast(pmelt, interval + dayCat ~ variable, mean)
@@ -190,4 +230,6 @@ plot <- ggplot(pcast, aes(x=interval, y=steps)) +
   ylab("Number of steps")
 plot + facet_wrap(~ dayCat, ncol=1)
 ```
+
+![](./PA1_template_files/figure-html/unnamed-chunk-13-1.png) 
 
